@@ -1,23 +1,47 @@
 const express = require('express');
 const Product  =  require('../Model/Product')
 const router = express.Router();
+const cloudinary = require('../config/cloudinary')
+const multer = require('multer')
 
+const upload = multer({ storage: multer.memoryStorage() });
 
-router.post('/uploadProduct',async(req , res)=>{
+router.post('/uploadProduct',upload.array('images', 5),async(req , res)=>{
    try{
-    const{name , brand , category , sellingPrice , currentPrice   , details} = req.body;
+    const{name , brand ,features, category , sellingPrice , price   , details, size} = req.body;
 
-    if (!name || !brand || !category || !sellingPrice || !currentPrice ) {
+    const parsedFeatures = JSON.parse(features);
+    const parsedSize = JSON.parse(size);
+
+    if (!name || !brand || !category || !sellingPrice || !price ) {
         return res.status(400).json({ success: false, message: 'All required fields must be provided' });
       }
+ 
+      if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ error: 'Images are required' });
+      }
 
+      const imageUrls = [];
+      for (const file of req.files) {
+        try {
+          const base64Image = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+          const result = await cloudinary.uploader.upload(base64Image, { folder: 'products' });
+          imageUrls.push(result.secure_url);
+        } catch (uploadError) {
+          console.error('Error uploading image to Cloudinary:', uploadError);
+          return res.status(500).json({ error: 'Failed to upload image' });
+        }
+      }
     const product = new Product({
         name,
         brand,
-        currentPrice,
+        price,
         sellingPrice,
         category,
         details,
+        features:parsedFeatures,
+        imageUrls,
+        size: parsedSize,
       });
 
       await product.save();
@@ -28,9 +52,9 @@ router.post('/uploadProduct',async(req , res)=>{
 } )
 
 
-router.put("/updateProduct/:id",async(req , res)=>{
+router.put("/updateProduct/:id", upload.array('images', 5),async(req , res)=>{
     try{
-        const{name , brand , category , sellingPrice , currentPrice   , details} = req.body;
+        const{name , brand , category , sellingPrice , price, features, details,size} = req.body;
          const product =  await Product.findById(req.params.id)
 
          if (!product) {
@@ -39,10 +63,22 @@ router.put("/updateProduct/:id",async(req , res)=>{
 
          product.name = name;
          product.brand = brand;
-         product.currentPrice = currentPrice;
+         product.price = price;
          product.sellingPrice = sellingPrice;
          product.category = category;
          product.details = details;
+         product.features =  JSON.parse(features);
+         product.size = JSON.parse(features);
+
+         if (req.files && req.files.length > 0) {
+          const newImageUrls = [];
+          for (const file of req.files) {
+            const base64Image = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+            const result = await cloudinary.uploader.upload(base64Image, { folder: 'products' });
+            newImageUrls.push(result.secure_url);
+          }
+          product.imageUrls = newImageUrls;
+        }
 
          await product.save();
          res.status(200).json(product);

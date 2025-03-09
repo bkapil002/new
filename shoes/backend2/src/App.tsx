@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Product, Order } from './types';
 import ProductForm from './components/ProductForm';
 import ProductList from './components/ProductList';
@@ -7,100 +7,31 @@ import OrderList from './components/OrderList';
 import { Package, ShoppingBag, Plus } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 
-// Sample products for demonstration
-const initialProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Brother Handicraft Intersecting Wall Shelves',
-    price: 999.00,
-    sellingPrice: 510.00,
-    imageUrl: 'https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
-    category: 'Home',
-    features: {
-      cashOnDelivery: true,
-      lowestPrice: true,
-      fiveDayReturns: true,
-      freeDelivery: true
-    }
-  },
-  {
-    id: '2',
-    name: 'ZIYDECO Unique Design Boho Wall Hanging Shelf',
-    price: 499.00,
-    sellingPrice: 320.00,
-    imageUrl: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80',
-    category: 'Home',
-    features: {
-      cashOnDelivery: true,
-      lowestPrice: false,
-      fiveDayReturns: true,
-      freeDelivery: false
-    }
-  },
-  {
-    id: '3',
-    name: 'Urhan Hanging Shelf | Macrame Wall Hanging',
-    price: 350.00,
-    sellingPrice: 190.00,
-    imageUrl: 'https://images.unsplash.com/photo-1614630982169-e89202c5e045?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80',
-    category: 'Home',
-    features: {
-      cashOnDelivery: true,
-      lowestPrice: true,
-      fiveDayReturns: false,
-      freeDelivery: true
-    }
-  },
-  {
-    id: '4',
-    name: 'Macrame Wall Hanging Decor Plant Hanger',
-    price: 250.00,
-    sellingPrice: 150.00,
-    imageUrl: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80',
-    category: 'Home',
-    features: {
-      cashOnDelivery: true,
-      lowestPrice: false,
-      fiveDayReturns: true,
-      freeDelivery: true
-    }
-  },
-  {
-    id: '5',
-    name: 'Macrame Wall Hanging Decor Plant Hanger',
-    price: 250.00,
-    sellingPrice: 150.00,
-    imageUrl: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80',
-    category: 'Home',
-    features: {
-      cashOnDelivery: true,
-      lowestPrice: false,
-      fiveDayReturns: true,
-      freeDelivery: true
-    }
-  },
-  {
-    id: '6',
-    name: 'Macrame Wall Hanging Decor Plant Hanger',
-    price: 250.00,
-    sellingPrice: 150.00,
-    imageUrl: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80',
-    category: 'Home',
-    features: {
-      cashOnDelivery: true,
-      lowestPrice: false,
-      fiveDayReturns: true,
-      freeDelivery: true
-    }
-  }
-];
-
 function App() {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState<'products' | 'orders'>('products');
   const [showProductForm, setShowProductForm] = useState(false);
+
+  useEffect(() => {
+    // Fetch products from the API
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/product');
+        if (response.ok) {
+          const data = await response.json();
+          setProducts(data);
+        } else {
+          console.error('Failed to fetch products');
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleAddProduct = (product: Product) => {
     setProducts([...products, product]);
@@ -141,7 +72,7 @@ function App() {
                 : 'text-gray-500 hover:text-gray-700'
             }`}
           >
-            <Package className="w-5 h-5 mr-2  " />
+            <Package className="w-5 h-5 mr-2" />
             Products
           </button>
           <button
@@ -152,17 +83,17 @@ function App() {
                 : 'text-gray-500 hover:text-gray-700'
             }`}
           >
-            <ShoppingBag className="  w-5 h-5 mr-2" />
+            <ShoppingBag className="w-5 h-5 mr-2" />
             Orders
           </button>
         </div>
-        
+
         {activeTab === 'products' && (
           <button
             onClick={() => setShowProductForm(true)}
-            className=" flex cursor-pointer items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors ml-4 whitespace-nowrap"
+            className="flex cursor-pointer items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors ml-4 whitespace-nowrap"
           >
-            <Plus className="w-5 h-5 mr-2 " />
+            <Plus className="w-5 h-5 mr-2" />
             Upload Product
           </button>
         )}
@@ -189,8 +120,8 @@ function App() {
       {showProductForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl w-full">
-            <ProductForm 
-              onAddProduct={handleAddProduct} 
+            <ProductForm
+              onAddProduct={handleAddProduct}
               onCancel={() => setShowProductForm(false)}
             />
           </div>
@@ -199,10 +130,10 @@ function App() {
 
       {/* Order Modal */}
       {selectedProduct && (
-        <OrderForm 
-          product={selectedProduct} 
-          onClose={() => setSelectedProduct(null)} 
-          onSubmitOrder={handleSubmitOrder} 
+        <OrderForm
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          onSubmitOrder={handleSubmitOrder}
         />
       )}
     </div>

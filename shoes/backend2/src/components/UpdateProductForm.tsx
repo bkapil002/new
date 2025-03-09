@@ -1,38 +1,33 @@
-import React, { useState } from 'react';
-import { Product, ProductFeatures,ProductSize } from '../types';
+import React, { useState, useEffect } from 'react';
+import { Product } from '../types';
 import Compressor from 'compressorjs';
 import { X, Upload, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface ProductFormProps {
   onAddProduct: (product: Product) => void;
-  onCancel: () => void;
+  onClose: () => void;
+  product: Product; // Ensure product is passed as a prop
 }
 
-const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onCancel }) => {
-  const [name, setName] = useState('');
-  const [brand, setBrand] = useState('');
-  const [category, setCategory] = useState('Home');
-  const [price, setPrice] = useState('');
-  const [sellingPrice, setSellingPrice] = useState('');
-  const [details, setDetails] = useState('');
-  const [features, setFeatures] = useState<ProductFeatures>({
-    cashOnDelivery: false,
-    lowestPrice: false,
-    fiveDayReturns: false,
-    freeDelivery: false,
-  });
-  const [size, setSize] = useState<ProductSize>({
-    US7: false
-    US8: false
-    US9: false
-    US10: false
-    US11: false
-    US12: false
-  });
+const UpdateProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onClose, product }) => {
+  const [name, setName] = useState(product?.name || '');
+  const [brand, setBrand] = useState(product?.brand || '');
+  const [category, setCategory] = useState(product?.category || 'Home');
+  const [price, setPrice] = useState(product?.price?.toString() || '');
+  const [sellingPrice, setSellingPrice] = useState(product?.sellingPrice?.toString() || '');
+  const [details, setDetails] = useState(product?.details || '');
+  const [cashOnDelivery, setCashOnDelivery] = useState(product?.features?.cashOnDelivery || false);
+  const [lowestPrice, setLowestPrice] = useState(product?.features?.lowestPrice || false);
+  const [fiveDayReturns, setFiveDayReturns] = useState(product?.features?.fiveDayReturns || false);
+  const [freeDelivery, setFreeDelivery] = useState(product?.features?.freeDelivery || false);
   const [images, setImages] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>(product?.imageUrls || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    console.log('Updating product with ID:', product?._id);
+  }, [product]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -81,8 +76,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onCancel }) => 
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (images.length === 0) {
-      toast.error('Please upload at least one image');
+    if (!product?._id) {
+      console.error('Product ID is undefined');
+      toast.error('Product ID is missing');
       setIsSubmitting(false);
       return;
     }
@@ -96,48 +92,43 @@ const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onCancel }) => 
       formData.append('price', price);
       formData.append('sellingPrice', sellingPrice);
       formData.append('details', details);
-
-      // Convert features object to JSON string
-      formData.append('features', JSON.stringify(features));
+      formData.append('features', JSON.stringify({
+        cashOnDelivery,
+        lowestPrice,
+        fiveDayReturns,
+        freeDelivery,
+      }));
 
       compressedImages.forEach((image: any) => {
         formData.append('images', image.file);
       });
 
-      const response = await fetch('http://localhost:5000/api/product/uploadProduct', {
-        method: 'POST',
+      const response = await fetch(`http://localhost:5000/api/product/updateProduct/${product._id}`, {
+        method: 'PUT',
         body: formData,
       });
 
       if (response.ok) {
         const result = await response.json();
-        toast.success('Product uploaded successfully');
+        toast.success('Product updated successfully');
         onAddProduct(result);
-        onCancel();
       } else {
-        toast.error('Failed to upload product');
+        toast.error('Failed to update product');
       }
     } catch (error) {
       console.error('Error:', error);
-      toast.error('An error occurred while uploading the product');
+      toast.error('An error occurred while updating the product');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleFeatureChange = (feature: keyof ProductFeatures, value: boolean) => {
-    setFeatures(prevFeatures => ({
-      ...prevFeatures,
-      [feature]: value,
-    }));
-  };
-
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg max-w-5xl w-full">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">Upload New Product</h2>
+        <h2 className="text-xl font-semibold text-gray-900">Update Product</h2>
         <button
-          onClick={onCancel}
+          onClick={onClose}
           className="text-gray-500 hover:text-gray-700"
         >
           <X className="w-5 h-5" />
@@ -217,8 +208,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onCancel }) => 
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  checked={features.cashOnDelivery}
-                  onChange={(e) => handleFeatureChange('cashOnDelivery', e.target.checked)}
+                  checked={cashOnDelivery}
+                  onChange={(e) => setCashOnDelivery(e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <span className="ml-2 text-sm text-gray-700">Cash on Delivery</span>
@@ -226,8 +217,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onCancel }) => 
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  checked={features.lowestPrice}
-                  onChange={(e) => handleFeatureChange('lowestPrice', e.target.checked)}
+                  checked={lowestPrice}
+                  onChange={(e) => setLowestPrice(e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <span className="ml-2 text-sm text-gray-700">Lowest Price</span>
@@ -235,8 +226,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onCancel }) => 
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  checked={features.fiveDayReturns}
-                  onChange={(e) => handleFeatureChange('fiveDayReturns', e.target.checked)}
+                  checked={fiveDayReturns}
+                  onChange={(e) => setFiveDayReturns(e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <span className="ml-2 text-sm text-gray-700">5-Day Returns</span>
@@ -244,16 +235,14 @@ const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onCancel }) => 
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  checked={features.freeDelivery}
-                  onChange={(e) => handleFeatureChange('freeDelivery', e.target.checked)}
+                  checked={freeDelivery}
+                  onChange={(e) => setFreeDelivery(e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <span className="ml-2 text-sm text-gray-700">Free Delivery</span>
               </label>
             </div>
           </div>
-
-
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -290,12 +279,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onCancel }) => 
               onChange={(e) => setCategory(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="Lifestyle">Lifestyle</option>
-              <option value="Airmax">Airmax</option>
-              <option value="Running">Running</option>
-              <option value="Sneakers">Sneakers</option>
-              <option value="Trainding">Trainding</option>
-              <option value="Other">Other</option>
+              <option value="Home">Home</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Beauty">Beauty</option>
+              <option value="Sports">Sports</option>
+              <option value="Books">Books</option>
             </select>
           </div>
 
@@ -316,7 +305,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onCancel }) => 
         <div className="col-span-2 flex justify-end space-x-3 pt-6">
           <button
             type="button"
-            onClick={onCancel}
+            onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Cancel
@@ -327,7 +316,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onCancel }) => 
             className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             <Upload className="w-4 h-4 mr-2" />
-            Upload Product
+            Update Product
           </button>
         </div>
       </form>
@@ -335,4 +324,4 @@ const ProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onCancel }) => 
   );
 };
 
-export default ProductForm;
+export default UpdateProductForm;
