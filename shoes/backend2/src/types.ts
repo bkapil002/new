@@ -25,6 +25,7 @@ export interface Product {
   brandName?: string;
   category?: string;
   features?: ProductFeatures;
+  size?: ProductSize;
 }
 
 export interface Order {

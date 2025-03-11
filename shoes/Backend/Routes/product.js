@@ -68,7 +68,7 @@ router.put("/updateProduct/:id", upload.array('images', 5),async(req , res)=>{
          product.category = category;
          product.details = details;
          product.features =  JSON.parse(features);
-         product.size = JSON.parse(features);
+         product.size = JSON.parse(size);
 
          if (req.files && req.files.length > 0) {
           const newImageUrls = [];
