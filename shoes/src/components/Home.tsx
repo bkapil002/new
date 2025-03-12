@@ -1,25 +1,24 @@
 import { useEffect, useState } from "react";
-import { ShoppingCart, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
+import { ShoppingCart, ChevronDown, ChevronUp } from "lucide-react";
 import top from '../image/top.png';
-import { Product, Category, NewArrival, CartItem } from "../type";
+import { Product, Category, NewArrival } from "../type";
 import categories1 from '../image/categories (1).png';
 import categories2 from '../image/categories (2).png';
 import categories3 from '../image/categories (3).png';
 import categories4 from '../image/categories (4).png';
 import { Link } from "react-router-dom";
-import { useCart } from "../Context/CartContext";
 
 const categories: Category[] = [
   { id: 1, name: "Sneakers", image: categories1, category: "Sneakers", description: "Street style sneakers", count: 50 },
   { id: 2, name: "Running", image: categories2, category: "Running", description: "Professional running shoes", count: 30 },
-  { id: 3, name: "Air Max", image: categories3, category: "Air Max", description: "Air Max collection", count: 40 },
+  { id: 3, name: "Air Max", image: categories3, category: "Airmax ", description: "Air Max collection", count: 40 },
   { id: 4, name: "Lifestyle", image: categories4, category: "Lifestyle", description: "Casual comfort shoes", count: 60 },
 ];
 
 export default function Home() {
   const [rotation, setRotation] = useState(0);
   const [activeCategory, setActiveCategory] = useState("All");
-  const { addToCart } = useCart();
+ 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [newArrival, setNewArrival] = useState<NewArrival[]>([]);
@@ -72,9 +71,7 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleAddToCart = (item: CartItem) => {
-    addToCart(item);
-  };
+ 
 
   const calculateDiscountPercentage = (price: number, sellingPrice: number) => {
     if (sellingPrice >= price) return 0;
@@ -121,6 +118,10 @@ export default function Home() {
         </div>
       </section>
 
+
+
+
+
       {/* Featured Products */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-12">
@@ -128,9 +129,7 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl font-bold mb-2">Featured Products</h2>
             <p className="text-gray-600">Discover our most popular styles</p>
           </div>
-          <button className="flex items-center text-blue-600 hover:text-blue-700 transition-colors">
-            View All <ChevronRight className="h-5 w-5 ml-1" />
-          </button>
+          
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
@@ -165,7 +164,6 @@ export default function Home() {
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="font-semibold text-lg line-clamp-2">{product.name}</h3>
-                      <p className="text-sm text-gray-600 mt-1">{product.category}</p>
                     </div>
                     <div className="text-right">
                       <span className="text-lg font-bold text-gray-900">
@@ -179,16 +177,7 @@ export default function Home() {
                     </div>
                   </div>
                   <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleAddToCart({
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        image: product.imageUrls[0],
-                        quantity: 1
-                      });
-                    }}
+                   
                     className="w-full bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2 transition-colors"
                   >
                     <ShoppingCart className="h-5 w-5" />
@@ -200,6 +189,14 @@ export default function Home() {
           })}
         </div>
       </section>
+
+
+
+
+
+
+
+
 
       {/* Categories */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
@@ -214,7 +211,7 @@ export default function Home() {
           {categories.map((category) => (
             <Link
               to={`/category/${category.category}`}
-              key={category.id}
+              key={category.category}
               className="group cursor-pointer relative overflow-hidden rounded-2xl"
             >
               <div className="relative h-[240px] sm:h-[300px]">
@@ -240,6 +237,10 @@ export default function Home() {
         </div>
       </section>
 
+
+
+
+
       {/* New Arrivals */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12">
@@ -247,6 +248,8 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl font-bold mb-2">New Arrivals</h2>
             <p className="text-gray-600">Fresh styles added weekly</p>
           </div>
+
+
 
           {/* Mobile Category Selector */}
           <div className="sm:hidden w-full">
@@ -345,16 +348,7 @@ export default function Home() {
                       </div>
                     </div>
                     <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleAddToCart({
-                          id: shoe.id,
-                          name: shoe.name,
-                          price: shoe.price,
-                          image: shoe.imageUrls[0],
-                          quantity: 1
-                        });
-                      }}
+                      
                       className="w-full bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2 transition-colors"
                     >
                       <ShoppingCart className="h-5 w-5" />
