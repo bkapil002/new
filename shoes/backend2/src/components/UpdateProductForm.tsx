@@ -235,12 +235,12 @@ const UpdateProductForm: React.FC<ProductFormProps> = ({ onAddProduct, onClose, 
                     onChange={(e) => setCategory(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="Home">Home</option>
-                    <option value="Electronics">Electronics</option>
-                    <option value="Fashion">Fashion</option>
-                    <option value="Beauty">Beauty</option>
-                    <option value="Sports">Sports</option>
-                    <option value="Books">Books</option>
+                    <option value="Lifestyle">Lifestyle</option>
+                    <option value="Airmax">Airmax</option>
+                    <option value="Running">Running</option>
+                    <option value="Sneakers">Sneakers</option>
+                    <option value="Training">Training</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
 
