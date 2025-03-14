@@ -14,7 +14,8 @@ export interface ProductFeatures {
   }
   
 export interface Product{
-    id: number;
+    _id: number;
+    id:number;
     name: string;
     brand:string;
     details:string
@@ -38,7 +39,7 @@ export interface Category {
 }
 
 export interface NewArrival {
-    id: number;
+    _id: number;
     name: string;
     brand:string;
     details:string

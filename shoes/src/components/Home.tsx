@@ -137,8 +137,8 @@ export default function Home() {
             const discountPercentage = calculateDiscountPercentage(product.price, product.sellingPrice);
             return (
               <Link
-                to={`/product/${product.id}`}
-                key={product.id}
+                to={`/product/${product._id}`}
+                key={product._id}
                 className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
               >
                 <div className="relative h-[240px] sm:h-[280px] bg-gray-100 overflow-hidden group">
@@ -307,8 +307,8 @@ export default function Home() {
               const discountPercentage = calculateDiscountPercentage(shoe.price, shoe.sellingPrice);
               return (
                 <Link
-                  to={`/product/${shoe.id}`}
-                  key={shoe.id}
+                  to={`/product/${shoe._id}`}
+                  key={shoe._id}
                   className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                 >
                   <div className="relative h-[300px] sm:h-[350px] overflow-hidden">
