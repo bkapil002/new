@@ -1,5 +1,4 @@
 import { useParams, Link } from 'react-router-dom';
-import { ShoppingCart } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -99,12 +98,7 @@ const CategoryPage = () => {
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <button
-                      className="cursor-pointer w-full bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2 transition-colors"
-                    >
-                      <ShoppingCart className="h-5 w-5" />
-                      <span>Add to Cart</span>
-                    </button>
+                    
                   </div>
                 </div>
               </div>

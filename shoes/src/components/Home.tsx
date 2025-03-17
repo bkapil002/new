@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ShoppingCart, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import top from '../image/top.png';
 import { Product, Category, NewArrival } from "../type";
 import categories1 from '../image/categories (1).png';
@@ -18,7 +18,6 @@ const categories: Category[] = [
 export default function Home() {
   const [rotation, setRotation] = useState(0);
   const [activeCategory, setActiveCategory] = useState("All");
- 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [newArrival, setNewArrival] = useState<NewArrival[]>([]);
@@ -56,14 +55,12 @@ export default function Home() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
-      const rotationAngle = Math.min(50, scrollPosition / 2);
+      const rotationAngle = Math.min(50, scrollPosition / 6);
       setRotation(rotationAngle);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
- 
 
   const calculateDiscountPercentage = (price: number, sellingPrice: number) => {
     if (sellingPrice >= price) return 0;
@@ -71,37 +68,36 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Section */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          <div className="space-y-6 text-center lg:text-left">
-            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight leading-tight">
-              Discover the greatest shoe collection at the{" "}
-              <span className="text-blue-600">most affordable prices !!</span>
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="space-y-8 text-center lg:text-left">
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-none bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Discover the greatest shoe collection
             </h1>
-            <p className="text-muted-foreground text-base sm:text-lg max-w-[600px] mx-auto lg:mx-0">
+            <p className="text-gray-600 text-lg sm:text-xl max-w-[600px] mx-auto lg:mx-0 leading-relaxed">
               Browse from the biggest shoe collection this summer and avail greatest discounts on every product.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-medium transition-colors duration-200 w-full sm:w-auto">
+              <button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 rounded-xl text-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl w-full sm:w-auto">
                 Become member
               </button>
-              <button className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-lg text-lg font-medium transition-colors duration-200 w-full sm:w-auto">
-                Browse the collection
+              <button className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-4 rounded-xl text-lg font-medium transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">
+                Browse collection
               </button>
             </div>
-            <p className="text-sm text-muted-foreground">
-              *some terms get extra 10% discount
+            <p className="text-sm text-gray-500 italic">
+              *Get an extra 10% discount on selected items
             </p>
           </div>
-          <div className="relative h-[300px] sm:h-[400px] lg:h-[600px] w-full">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-white rounded-3xl" />
-            <div className="absolute inset-0 flex items-center justify-center p-8">
+          <div className="relative h-[400px] sm:h-[500px] lg:h-[700px] w-full">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl shadow-2xl" />
+            <div className="absolute inset-0 flex items-center justify-center p-12">
               <img
                 src={top}
                 alt="Featured Shoe"
-                className="object-contain w-full h-full transform transition-transform duration-500 hover:scale-105"
+                className="object-contain w-full h-full transform transition-all duration-500 hover:scale-110 filter drop-shadow-2xl"
                 style={{ transform: `rotate(${rotation}deg)` }}
                 loading="lazy"
               />
@@ -110,67 +106,59 @@ export default function Home() {
         </div>
       </section>
 
-
-
-
-
       {/* Featured Products */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-12">
           <div className="text-center sm:text-left mb-6 sm:mb-0">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">Featured Products</h2>
-            <p className="text-gray-600">Discover our most popular styles</p>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Featured Products
+            </h2>
+            <p className="text-gray-600 text-lg">Discover our most popular styles</p>
           </div>
-          
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product) => {
             const discountPercentage = calculateDiscountPercentage(product.price, product.sellingPrice || 0);
             return (
               <Link
                 to={`/product/${product._id}`}
                 key={product._id}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
               >
-                <div className="relative h-[240px] sm:h-[280px] bg-gray-100 overflow-hidden group">
+                <div className="relative h-[280px] sm:h-[320px] bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
                   {product.imageUrls && product.imageUrls[0] ? (
                     <img
                       src={product.imageUrls[0]}
                       alt={product.name}
-                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                       loading="lazy"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-gray-400">No image</span>
+                      <span className="text-gray-400">No image available</span>
                     </div>
                   )}
-                  
+                  {discountPercentage > 0 && (
+                    <div className="absolute top-4 right-4 bg-red-500 text-white text-sm font-medium px-3 py-1 rounded-full">
+                      {discountPercentage}% OFF
+                    </div>
+                  )}
                 </div>
                 <div className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="font-semibold text-lg line-clamp-2">{product.name}</h3>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-lg font-bold text-gray-900">
-                        ₹{product.sellingPrice?.toFixed(2) || product.price.toFixed(2)}
+                  <h3 className="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    {product.name}
+                  </h3>
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xl font-bold text-gray-900">
+                      ₹{product.sellingPrice?.toFixed(2) || product.price.toFixed(2)}
+                    </span>
+                    {discountPercentage > 0 && (
+                      <span className="text-sm text-gray-500 line-through">
+                        ₹{product.price.toFixed(2)}
                       </span>
-                      {discountPercentage > 0 && (
-                        <span className="block text-sm text-gray-500 line-through">
-                          ₹{product.price.toFixed(2)}
-                        </span>
-                      )}
-                    </div>
+                    )}
                   </div>
-                  <button
-                   
-                    className="w-full bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2 transition-colors"
-                  >
-                    <ShoppingCart className="h-5 w-5" />
-                    <span>Add to Cart</span>
-                  </button>
                 </div>
               </Link>
             );
@@ -178,44 +166,40 @@ export default function Home() {
         </div>
       </section>
 
-
-
-
-
-
-
-
-
       {/* Categories */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Popular Categories</h2>
-          <p className="text-gray-600">
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 bg-gradient-to-b from-white to-gray-50">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Popular Categories
+          </h2>
+          <p className="text-gray-600 text-lg">
             Explore our most sought-after collections, carefully curated for every style and need
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {categories.map((category) => (
             <Link
               to={`/category/${category.category}`}
               key={category.category}
-              className="group cursor-pointer relative overflow-hidden rounded-2xl"
+              className="group cursor-pointer relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
             >
-              <div className="relative h-[240px] sm:h-[300px]">
+              <div className="relative h-[300px] sm:h-[350px]">
                 <img
                   src={category.image}
                   alt={category.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20" />
-                <div className="absolute bottom-6 left-6 text-white">
-                  <h3 className="text-xl font-bold mb-1">{category.name}</h3>
-                  <p className="text-sm text-gray-200 mb-2">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
+                <div className="absolute bottom-8 left-8 right-8 text-white">
+                  <h3 className="text-2xl font-bold mb-2 transform group-hover:translate-x-2 transition-transform duration-300">
+                    {category.name}
+                  </h3>
+                  <p className="text-gray-200 mb-3 transform group-hover:translate-x-2 transition-transform duration-300 delay-75">
                     {category.description}
                   </p>
-                  <span className="text-sm bg-white/20 px-3 py-1 rounded-full">
+                  <span className="inline-block bg-white/20 px-4 py-2 rounded-full text-sm backdrop-blur-sm transform group-hover:translate-x-2 transition-transform duration-300 delay-150">
                     {category.count} Products
                   </span>
                 </div>
@@ -225,31 +209,27 @@ export default function Home() {
         </div>
       </section>
 
-
-
-
-
       {/* New Arrivals */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12">
           <div className="mb-6 sm:mb-0">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">New Arrivals</h2>
-            <p className="text-gray-600">Fresh styles added weekly</p>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              New Arrivals
+            </h2>
+            <p className="text-gray-600 text-lg">Fresh styles added weekly</p>
           </div>
-
-
 
           {/* Mobile Category Selector */}
           <div className="sm:hidden w-full">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="w-full flex items-center justify-between px-4 py-2 rounded-lg bg-gray-100 text-gray-700"
+              className="w-full flex items-center justify-between px-6 py-3 rounded-xl bg-white shadow-md text-gray-700"
             >
-              <span>{activeCategory}</span>
+              <span className="font-medium">{activeCategory}</span>
               {isDropdownOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
             </button>
             {isDropdownOpen && (
-              <div className="mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+              <div className="mt-2 w-full bg-white rounded-xl shadow-xl z-20 overflow-hidden">
                 {["All", "Running", "Lifestyle", "Training"].map((cat) => (
                   <button
                     key={cat}
@@ -257,7 +237,7 @@ export default function Home() {
                       setActiveCategory(cat);
                       setIsDropdownOpen(false);
                     }}
-                    className={`block w-full px-4 py-3 text-left transition-colors ${
+                    className={`block w-full px-6 py-3 text-left transition-colors ${
                       activeCategory === cat
                         ? 'bg-blue-600 text-white'
                         : 'text-gray-700 hover:bg-gray-50'
@@ -271,15 +251,15 @@ export default function Home() {
           </div>
 
           {/* Desktop Category Selector */}
-          <div className="hidden sm:flex space-x-3">
+          <div className="hidden sm:flex space-x-4">
             {["All", "Running", "Lifestyle", "Training"].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+                className={`px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
                   activeCategory === cat
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-blue-600 text-white shadow-lg transform scale-105'
+                    : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md'
                 }`}
               >
                 {cat}
@@ -297,51 +277,42 @@ export default function Home() {
                 <Link
                   to={`/product/${shoe._id}`}
                   key={shoe._id}
-                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                  className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
                 >
-                  <div className="relative h-[300px] sm:h-[350px] overflow-hidden">
+                  <div className="relative h-[350px] sm:h-[400px] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
                     {shoe.imageUrls && shoe.imageUrls[0] ? (
                       <img
                         src={shoe.imageUrls[0]}
                         alt={shoe.name}
-                        className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                         loading="lazy"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                        <span className="text-gray-400">No image</span>
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-gray-400">No image available</span>
                       </div>
                     )}
                     {discountPercentage > 0 && (
-                      <span className="absolute top-4 right-4 bg-red-500 text-white text-sm font-medium px-3 py-1 rounded-full">
+                      <div className="absolute top-4 right-4 bg-red-500 text-white text-sm font-medium px-3 py-1 rounded-full">
                         {discountPercentage}% OFF
-                      </span>
+                      </div>
                     )}
                   </div>
                   <div className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="font-semibold text-lg line-clamp-2">{shoe.name}</h3>
-                        <p className="text-sm text-gray-600 mt-1">{shoe.category}</p>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-lg font-bold text-gray-900">
-                          ₹{shoe.sellingPrice?.toFixed(2) || shoe.price.toFixed(2)}
+                    <h3 className="font-semibold text-xl mb-2 group-hover:text-blue-600 transition-colors">
+                      {shoe.name}
+                    </h3>
+                    <p className="text-gray-600 mb-4">{shoe.category}</p>
+                    <div className="flex justify-between items-baseline">
+                      <span className="text-2xl font-bold text-gray-900">
+                        ₹{shoe.sellingPrice?.toFixed(2) || shoe.price.toFixed(2)}
+                      </span>
+                      {discountPercentage > 0 && (
+                        <span className="text-sm text-gray-500 line-through">
+                          ₹{shoe.price.toFixed(2)}
                         </span>
-                        {discountPercentage > 0 && (
-                          <span className="block text-sm text-gray-500 line-through">
-                            ₹{shoe.price.toFixed(2)}
-                          </span>
-                        )}
-                      </div>
+                      )}
                     </div>
-                    <button
-                      
-                      className="w-full bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2 transition-colors"
-                    >
-                      <ShoppingCart className="h-5 w-5" />
-                      <span>Add to Cart</span>
-                    </button>
                   </div>
                 </Link>
               );
