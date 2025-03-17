@@ -124,6 +124,52 @@ router.get('/:id',async(req,res)=>{
      res.status(500).json({error: error.message})
    }
 })
+
+router.get('/category/lifestyle-group', async (req, res) => {
+  try {
+     
+      const categories = ['Lifestyle', 'Running', 'Sneakers', 'Training'];
+
+  
+      const products = await Product.aggregate([
+          { $match: { category: { $in: categories } } },
+          { $group: { _id: "$category", product: { $first: "$$ROOT" } } },
+          { $replaceRoot: { newRoot: "$product" } }
+      ]);
+
+      res.json(products);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/related-products/:id', async (req, res) => {
+  try {
+      const productId = req.params.id;
+
+      // Find the original product to determine its brand and category
+      const originalProduct = await Product.findById(productId);
+
+      if (!originalProduct) {
+          return res.status(404).json({ success: false, message: 'Product not found' });
+      }
+
+      // Find related products based on brand and category
+      const relatedProducts = await Product.find({
+          $or: [
+              { brand: originalProduct.brand, category: { $ne: originalProduct.category } },
+              { category: originalProduct.category, brand: { $ne: originalProduct.brand } }
+          ],
+          _id: { $ne: productId }
+      });
+
+      res.json(relatedProducts);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+
 module.exports = router;
 
 

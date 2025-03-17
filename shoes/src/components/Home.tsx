@@ -26,18 +26,10 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/product');
-        if (response.ok) {
+        const response = await fetch('http://localhost:5000/api/product/category/lifestyle-group');
+        if(response.ok){
           const data = await response.json();
-          const desiredCategories = ["Lifestyle", "Airmax", "Running", "Sneakers"];
-          const filteredProductsMap = new Map();
-          data.forEach(product => {
-            if (desiredCategories.includes(product.category) && !filteredProductsMap.has(product.category)) {
-              filteredProductsMap.set(product.category, product);
-            }
-          });
-          const filteredProducts = Array.from(filteredProductsMap.values());
-          setProducts(filteredProducts);
+          setProducts(data);
         }
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -134,7 +126,7 @@ export default function Home() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {products.map((product) => {
-            const discountPercentage = calculateDiscountPercentage(product.price, product.sellingPrice);
+            const discountPercentage = calculateDiscountPercentage(product.price, product.sellingPrice || 0);
             return (
               <Link
                 to={`/product/${product._id}`}
@@ -154,11 +146,7 @@ export default function Home() {
                       <span className="text-gray-400">No image</span>
                     </div>
                   )}
-                  {discountPercentage > 0 && (
-                    <span className="absolute top-4 right-4 bg-red-500 text-white text-sm font-medium px-3 py-1 rounded-full">
-                      {discountPercentage}% OFF
-                    </span>
-                  )}
+                  
                 </div>
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
@@ -304,7 +292,7 @@ export default function Home() {
           {newArrival
             .filter((shoe) => activeCategory === "All" || shoe.category === activeCategory)
             .map((shoe) => {
-              const discountPercentage = calculateDiscountPercentage(shoe.price, shoe.sellingPrice);
+              const discountPercentage = calculateDiscountPercentage(shoe.price, shoe.sellingPrice || 0);
               return (
                 <Link
                   to={`/product/${shoe._id}`}
