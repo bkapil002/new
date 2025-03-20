@@ -5,7 +5,10 @@ import lowerPrice from '../image/saving-money.png';
 import returnProduct from '../image/return.png';
 import cashOnDelivery from '../image/cash-on-delivery.png';
 import freeDelivery from '../image/free-shipping.png';
+import { useAuth } from '../Context/AuthContext';
 import axios from 'axios';
+import toast from 'react-hot-toast';
+
 
 interface Product {
   _id: string;
@@ -31,6 +34,7 @@ const ProductPage: React.FC = () => {
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const {user , updateCart} = useAuth()
 
   const fetchProduct = useCallback(async () => {
     try {
@@ -49,6 +53,26 @@ const ProductPage: React.FC = () => {
       console.error('Failed to fetch related products', error);
     }
   }, [id]);
+
+  const addToCart = async(product:string)=>{
+    try{
+    const token= user ? user.token:null;
+
+    if(!token){
+      toast('Please login to add items to the cart');
+      return;
+    }
+
+    const response= await axios.post('http://localhost:5000/api/cart/add', {productId: product._id , quantity:1, size:selectedSize},
+    {headers: {'Authorization': `Bearer ${token}`}});
+    
+    toast('Product added to cart')
+    updateCart(response.data.product)
+    }catch(error){
+      console.error('Failed to add to cart', error);
+      toast.error('Add the Size')
+    }
+  }
 
   useEffect(() => {
     fetchProduct();
@@ -258,7 +282,9 @@ const ProductPage: React.FC = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="flex-1 bg-black text-white py-4 px-6 rounded-xl hover:bg-gray-900 transition-colors flex items-center justify-center space-x-2">
+              <button
+              onClick={()=>addToCart(product)}
+               className="flex-1 bg-black text-white py-4 px-6 rounded-xl hover:bg-gray-900 transition-colors flex items-center justify-center space-x-2">
                 <ShoppingCart className="w-5 h-5" />
                 <span>Add to Cart</span>
               </button>

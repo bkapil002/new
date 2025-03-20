@@ -1,5 +1,6 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import Home from './components/Home';
 import Footer from './side/Flooter'; 
 import Navbar from './side/Navebar'; 
@@ -22,6 +23,7 @@ function App() {
         <Route path='/category/:category' element={<CategoryPage/>}/>
       </Routes>
       <Footer />
+      {/* <Toaster position="bottom-right" /> */}
     </Router>
     </CartProvider>
     </AuthProvider>

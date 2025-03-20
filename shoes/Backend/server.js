@@ -7,6 +7,7 @@ const user = require('./Routes/user');
 const address = require('./Routes/address')
 const product = require('./Routes/product')
 const cookieParser = require('cookie-parser');
+const cart = require('./Routes/cart');
 
 const app = express();
 
@@ -54,7 +55,8 @@ async function initializeApp() {
     app.use('/api/users', user);
     app.use('/api/address',address)
     app.use('/api/product',product)
-
+    app.use('/api/cart', cart)
+    
     // Health check route
     app.get('/health', (req, res) => {
       res.json({
