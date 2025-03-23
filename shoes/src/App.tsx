@@ -23,7 +23,7 @@ function App() {
         <Route path='/category/:category' element={<CategoryPage/>}/>
       </Routes>
       <Footer />
-      {/* <Toaster position="bottom-right" /> */}
+      <Toaster position="top-right" />
     </Router>
     </CartProvider>
     </AuthProvider>

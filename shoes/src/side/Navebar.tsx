@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Search, User, Menu, X, ShoppingCart, LogIn } from 'lucide-react';
-import { useCart } from '../Context/CartContext';
 import { Link } from 'react-router-dom';
 import LoginModal from '../Page/LoginModal';
 import { useAuth } from '../Context/AuthContext';
@@ -17,11 +16,10 @@ interface Product {
 }
 
 const Navbar: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated ,cart } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { cartItems } = useCart();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
@@ -101,11 +99,11 @@ const Navbar: React.FC = () => {
                   </button>
                   <Link to={'/cart'} className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 relative">
                     <ShoppingCart className="h-5 w-5 text-gray-600" />
-                    {cartItems.length > 0 && (
+                    
                       <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                        {cartItems.length}
+                        {cart.length}
                       </span>
-                    )}
+                    
                   </Link>
                 </>
               )}
@@ -136,11 +134,11 @@ const Navbar: React.FC = () => {
                   </button>
                   <Link to={'/cart'} className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 relative">
                     <ShoppingCart className="h-5 w-5 text-gray-600" />
-                    {cartItems.length > 0 && (
+                   
                       <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                        {cartItems.length}
+                        {cart.length}
                       </span>
-                    )}
+                   
                   </Link>
                 </>
               )}
