@@ -6,15 +6,14 @@ import Footer from './side/Flooter';
 import Navbar from './side/Navebar'; 
 import ProductPage from './components/ProductPage';
 import CartPage from './side/Cart';
-import { CartProvider } from './Context/CartContext';
 import CategoryPage from './components/CategoryPage';
 import { AuthProvider } from './Context/AuthContext';
 
 function App() {
   return (
-    <AuthProvider>
-    <CartProvider>
+    
     <Router>
+      <AuthProvider>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -24,9 +23,8 @@ function App() {
       </Routes>
       <Footer />
       <Toaster position="top-right" />
+      </AuthProvider>
     </Router>
-    </CartProvider>
-    </AuthProvider>
   );
 }
 

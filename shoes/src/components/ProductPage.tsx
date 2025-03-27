@@ -9,7 +9,6 @@ import { useAuth } from '../Context/AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-
 interface Product {
   _id: string;
   name: string;
@@ -32,9 +31,10 @@ const ProductPage: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedSize, setSelectedSize] = useState('');
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [relatedProductsLoading, setRelatedProductsLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-  const {user , updateCart} = useAuth()
+  const { user, updateCart } = useAuth();
 
   const fetchProduct = useCallback(async () => {
     try {
@@ -51,35 +51,38 @@ const ProductPage: React.FC = () => {
       setRelatedProducts(response.data);
     } catch (error) {
       console.error('Failed to fetch related products', error);
+    } finally {
+      setRelatedProductsLoading(false);
     }
   }, [id]);
 
-  const addToCart = async(product:string)=>{
-    try{
-    const token= user ? user.token:null;
+  const addToCart = async (product: Product) => {
+    try {
+      const token = user ? user.token : null;
 
-    if(!token){
-      toast('Please login to add items to the cart');
-      return;
-    }
+      if (!token) {
+        toast('Please login to add items to the cart');
+        return;
+      }
 
-    const response= await axios.post('http://localhost:5000/api/cart/add', {productId: product._id , quantity:1, size:selectedSize},
-    {headers: {'Authorization': `Bearer ${token}`}});
-    
-    toast('Product added to cart')
-    updateCart(response.data.product)
-    }catch(error){
+      const response = await axios.post(
+        'http://localhost:5000/api/cart/add',
+        { productId: product._id, quantity: 1, size: selectedSize },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      toast('Product added to cart');
+      updateCart(response.data.products);
+    } catch (error) {
       console.error('Failed to add to cart', error);
-      toast.error('Add the Size')
+      toast.error('Add the Size');
     }
-  }
+  };
 
   useEffect(() => {
     fetchProduct();
     fetchRelated();
   }, [fetchProduct, fetchRelated]);
-
-  
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -283,13 +286,13 @@ const ProductPage: React.FC = () => {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               <button
-              onClick={()=>addToCart(product)}
-               className="flex-1 bg-black text-white py-4 px-6 rounded-xl hover:bg-gray-900 transition-colors flex items-center justify-center space-x-2">
+                onClick={() => addToCart(product)}
+                className="flex-1 bg-black text-white py-4 px-6 rounded-xl hover:bg-gray-900 transition-colors flex items-center justify-center space-x-2"
+              >
                 <ShoppingCart className="w-5 h-5" />
                 <span>Add to Cart</span>
               </button>
               <div className="flex gap-4">
-               
                 <button
                   className="p-4 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
                   aria-label="Share"
@@ -314,53 +317,59 @@ const ProductPage: React.FC = () => {
         {/* Related Products */}
         <div className="mt-16 sm:mt-24">
           <h2 className="text-2xl font-bold text-gray-900 mb-8">You May Also Like</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {relatedProducts.map((relatedProduct) => {
-              const discountPercentage = calculateDiscount(
-                relatedProduct.price,
-                relatedProduct.sellingPrice || relatedProduct.price
-              );
+          {relatedProductsLoading ? (
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading related products...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+              {relatedProducts.map((relatedProduct) => {
+                const discountPercentage = calculateDiscount(
+                  relatedProduct.price,
+                  relatedProduct.sellingPrice || relatedProduct.price
+                );
 
-              return (
-                <Link
-                  to={`/product/${relatedProduct._id}`}
-                  key={relatedProduct._id}
-                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-                >
-                  <div className="relative aspect-square overflow-hidden">
-                    <img
-                      src={relatedProduct.imageUrls?.[0] || ''}
-                      alt={relatedProduct.name}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                    {discountPercentage > 0 && (
-                      <div className="absolute top-4 left-4 bg-red-500 text-white text-sm font-medium px-3 py-1 rounded-full">
-                        {discountPercentage}% OFF
-                      </div>
-                    )}
-                    
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-medium text-gray-900 mb-1 line-clamp-1">
-                      {relatedProduct.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-2">{relatedProduct.category}</p>
-                    <div className="flex items-baseline space-x-2">
-                      <span className="text-lg font-bold text-gray-900">
-                        ₹{relatedProduct.sellingPrice?.toFixed(2) || relatedProduct.price.toFixed(2)}
-                      </span>
-                      {relatedProduct.sellingPrice && relatedProduct.sellingPrice < relatedProduct.price && (
-                        <span className="text-sm text-gray-500 line-through">
-                          ₹{relatedProduct.price.toFixed(2)}
-                        </span>
+                return (
+                  <Link
+                    to={`/product/${relatedProduct._id}`}
+                    key={relatedProduct._id}
+                    className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                  >
+                    <div className="relative aspect-square overflow-hidden">
+                      <img
+                        src={relatedProduct.imageUrls?.[0] || ''}
+                        alt={relatedProduct.name}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                      {discountPercentage > 0 && (
+                        <div className="absolute top-4 left-4 bg-red-500 text-white text-sm font-medium px-3 py-1 rounded-full">
+                          {discountPercentage}% OFF
+                        </div>
                       )}
                     </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+                    <div className="p-4">
+                      <h3 className="font-medium text-gray-900 mb-1 line-clamp-1">
+                        {relatedProduct.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-2">{relatedProduct.category}</p>
+                      <div className="flex items-baseline space-x-2">
+                        <span className="text-lg font-bold text-gray-900">
+                          ₹{relatedProduct.sellingPrice?.toFixed(2) || relatedProduct.price.toFixed(2)}
+                        </span>
+                        {relatedProduct.sellingPrice && relatedProduct.sellingPrice < relatedProduct.price && (
+                          <span className="text-sm text-gray-500 line-through">
+                            ₹{relatedProduct.price.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Search, User, Menu, X, ShoppingCart, LogIn } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import LoginModal from '../Page/LoginModal';
-import { useAuth } from '../Context/AuthContext';
+import { useAuth } from '../Context/AuthContext'; // Ensure correct import path
 import SideBar from './SideBar';
 
 interface Product {
-  _id: string;
+  id: string;
   name: string;
   price: number;
   sellingPrice: number;
@@ -16,7 +16,7 @@ interface Product {
 }
 
 const Navbar: React.FC = () => {
-  const { isAuthenticated ,cart } = useAuth();
+  const { isAuthenticated, cart } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -54,9 +54,11 @@ const Navbar: React.FC = () => {
     }
   }, [searchQuery]);
 
+
+
   return (
     <>
-      <nav className="bg-white shadow-md  top-0 left-0 right-0 z-40">
+      <nav className="bg-white shadow-md top-0 left-0 right-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -83,27 +85,27 @@ const Navbar: React.FC = () => {
                 <Search className="h-5 w-5 text-gray-600" />
               </button>
               {!isAuthenticated ? (
-                <button 
-                  onClick={() => setIsLoginModalOpen(true)} 
+                <button
+                  onClick={() => setIsLoginModalOpen(true)}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
                 >
                   <LogIn className="h-5 w-5 text-gray-600" />
                 </button>
               ) : (
                 <>
-                  <button 
-                    onClick={() => setIsSidebarOpen(true)} 
+                  <button
+                    onClick={() => setIsSidebarOpen(true)}
                     className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
                   >
                     <User className="h-5 w-5 text-gray-600" />
                   </button>
                   <Link to={'/cart'} className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 relative">
                     <ShoppingCart className="h-5 w-5 text-gray-600" />
-                    
+                    {cart && cart.length > 0 && (
                       <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                         {cart.length}
                       </span>
-                    
+                    )}
                   </Link>
                 </>
               )}
@@ -118,27 +120,27 @@ const Navbar: React.FC = () => {
                 <Search className="h-5 w-5 text-gray-600" />
               </button>
               {!isAuthenticated ? (
-                <button 
-                  onClick={() => setIsLoginModalOpen(true)} 
+                <button
+                  onClick={() => setIsLoginModalOpen(true)}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
                 >
                   <LogIn className="h-5 w-5 text-gray-600" />
                 </button>
               ) : (
                 <>
-                  <button 
-                    onClick={() => setIsSidebarOpen(true)} 
+                  <button
+                    onClick={() => setIsSidebarOpen(true)}
                     className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
                   >
                     <User className="h-5 w-5 text-gray-600" />
                   </button>
                   <Link to={'/cart'} className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 relative">
                     <ShoppingCart className="h-5 w-5 text-gray-600" />
-                   
+                    {cart?.length > 0 && (
                       <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                         {cart.length}
                       </span>
-                   
+                    )}
                   </Link>
                 </>
               )}
@@ -151,7 +153,7 @@ const Navbar: React.FC = () => {
                 ) : (
                   <Menu className="h-5 w-5 text-gray-600" />
                 )}
-              </button>
+              </button> 
             </div>
           </div>
         </div>
@@ -204,8 +206,8 @@ const Navbar: React.FC = () => {
                         const discountPercentage = calculateDiscountPercentage(product.price, product.sellingPrice);
                         return (
                           <Link
-                            to={`/product/${product._id}`}
-                            key={product._id}
+                            to={`/product/${product.id}`}
+                            key={product.id}
                             className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100"
                             onClick={() => setIsSearchOpen(false)}
                           >

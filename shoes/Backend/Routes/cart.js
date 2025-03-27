@@ -63,6 +63,9 @@ router.post('/add', auth, async (req, res) => {
     }
   })
 
+
+  
+
   router.delete('/remove/:id', auth, async (req, res) => {
     try {
         const { id: productId } = req.params;
@@ -87,13 +90,14 @@ router.post('/add', auth, async (req, res) => {
 
 
 router.get('/', auth, async(req, res)=>{
-  try{
-      const cart = await Cart.findOne({ user: req.user._id });
-      if(!cart){
-          return res.status(404).json({ message: 'Cart not found' });
-      }
-      res.json(cart);
-  }catch(error){
+  try {
+    const cart = await Cart.findOne({ user: req.user._id })
+      .populate('products.product');
+    if (!cart) {
+      return res.json({ products: [] }); // Return an empty products array if cart is not found
+    }
+    res.json(cart);
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 })
