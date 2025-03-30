@@ -6,7 +6,7 @@ const router = express.Router()
 
 router.post('/add', auth, async (req, res) => {
   try {
-      const { productId, quantity, size } = req.body;
+      const { id, quantity, size } = req.body;
       let cart = await Cart.findOne({ user: req.user._id });
 
       if (!cart) {
@@ -14,7 +14,7 @@ router.post('/add', auth, async (req, res) => {
       }
 
       const productIndex = cart.products.findIndex(
-          item => item.product.toString() === productId
+          item => item.product.toString() === id
       );
 
       if (productIndex > -1) {
@@ -23,7 +23,7 @@ router.post('/add', auth, async (req, res) => {
           cart.products[productIndex].size = size; // Ensure size is updated
       } else {
           // If the product does not exist, add it to the cart with the specified size
-          cart.products.push({ product: productId, quantity, size });
+          cart.products.push({ product: id, quantity, size });
       }
 
       await cart.save();
@@ -35,9 +35,10 @@ router.post('/add', auth, async (req, res) => {
 
 
 
-  router.post('/update', auth , async(req , res) =>{
+  router.post('/update/:id', auth , async(req , res) =>{
     try{
-      const { productId, quantity } = req.body;
+      const {id} = req.params
+      const { quantity } = req.body;
       const cart = await Cart.findOne({user:req.user._id})
 
       if(!cart){
@@ -45,7 +46,7 @@ router.post('/add', auth, async (req, res) => {
       }
 
       const productIndex = cart.products.findIndex(
-        item => item.product.toString() === productId
+        item => item.product.toString() === id
       );
 
       if(productIndex > -1){
@@ -68,14 +69,14 @@ router.post('/add', auth, async (req, res) => {
 
   router.delete('/remove/:id', auth, async (req, res) => {
     try {
-        const { id: productId } = req.params;
+        const { id } = req.params;
         const cart = await Cart.findOne({ user: req.user._id });
 
         if (!cart) {
             return res.status(404).json({ error: 'Cart not found' });
         }
         cart.products = cart.products.filter(
-            item => item.product.toString() !== productId
+            item => item.product.toString() !== id
         );
 
         await cart.save();

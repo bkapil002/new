@@ -67,7 +67,7 @@ const ProductPage: React.FC = () => {
 
       const response = await axios.post(
         'http://localhost:5000/api/cart/add',
-        { productId: product._id, quantity: 1, size: selectedSize },
+        { id: product._id, quantity: 1, size: selectedSize },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
