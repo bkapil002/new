@@ -2,11 +2,12 @@ import { HelpCircle, X, Minus, Plus, ShoppingCart } from 'lucide-react';
 import { useAuth } from '../Context/AuthContext';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface Product {
   _id: string;
   name: string;
-  price: number;
+  sellingPrice: number;
   imageUrls: string[];
   category: string;
   brand: string;
@@ -25,14 +26,18 @@ const CartPage = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartTotal, setCartTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const calculateCartTotal = (items: CartItem[]) => {
     const total = items.reduce((sum, item) => {
-      const price = item.product.price || 0;
-      return sum + price * item.quantity;
+      const sellingPrice = item.product.sellingPrice || 0;
+      return sum + sellingPrice * item.quantity;
     }, 0);
     setCartTotal(total);
   };
+
+
+
 
   const fetchCartItems = async () => {
     if (!user) {
@@ -56,6 +61,30 @@ const CartPage = () => {
       setLoading(false);
     }
   };
+
+  const checkUserDetails = async () => {
+    try {
+      const token = user.token;
+    const response = await axios.get('http://localhost:5000/api/address/check-user-details',{
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+      if (response.status === 404) {
+        navigate('/addess');
+      } else if (!response) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to check user details. Please try again.');
+      } else {
+        const userDetails = await response.json();
+        navigate('/AddressDetails', { state: { userDetails } });
+      }
+    } catch (error) {
+      console.error('Error checking user details:', error)
+    } 
+  };
+
 
   const updateItemQuantity = async (id: string, quantity: number) => {
     if (!user) {
@@ -93,6 +122,9 @@ const CartPage = () => {
       alert('Failed to update the quantity. Please try again.');
     }
   };
+
+
+
 
   const removeItemFromCart = async (id: string) => {
     if (!user) {
@@ -181,7 +213,7 @@ const CartPage = () => {
                               {item.size && <p className="text-sm text-gray-500">Size: {item.size}</p>}
                             </div>
                             <p className="text-lg font-medium text-gray-900">
-                              ₹{(item.product.price * item.quantity).toFixed(2)}
+                              ₹{(item.product.sellingPrice * item.quantity).toFixed(2)}
                             </p>
                           </div>
 
@@ -189,7 +221,7 @@ const CartPage = () => {
                             <div className="flex items-center space-x-3 bg-gray-100 rounded-lg p-1">
                               <button
                                 onClick={() => updateItemQuantity(item.product._id, item.quantity - 1)}
-                                className="p-2 rounded-md hover:bg-gray-200 transition-colors"
+                                className="p-2 rounded-md hover:bg-gray-200 transition-colors  cursor-pointer"
                                 disabled={item.quantity <= 1}
                               >
                                 <Minus className="h-4 w-4" />
@@ -197,7 +229,7 @@ const CartPage = () => {
                               <span className="w-8 text-center font-medium">{item.quantity}</span>
                               <button
                                 onClick={() => updateItemQuantity(item.product._id, item.quantity + 1)}
-                                className="p-2 rounded-md hover:bg-gray-200 transition-colors"
+                                className="p-2 rounded-md hover:bg-gray-200 transition-colors cursor-pointer"
                                 disabled={item.quantity >= 2}
                               >
                                 <Plus className="h-4 w-4" />
@@ -205,7 +237,7 @@ const CartPage = () => {
                             </div>
                             <button
                               onClick={() => removeItemFromCart(item.product._id)}
-                              className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-gray-100"
+                              className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-gray-100 cursor-pointer"
                             >
                               <X className="h-5 w-5" />
                             </button>
@@ -254,7 +286,8 @@ const CartPage = () => {
                   </div>
 
                   <button
-                    className="mt-6 w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                    className="mt-6 w-full cursor-pointer bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                    onClick={checkUserDetails}
                   >
                     Proceed to Checkout
                   </button>
