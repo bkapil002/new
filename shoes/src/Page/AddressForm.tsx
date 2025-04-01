@@ -23,14 +23,14 @@ export default function AddressForm() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [formData, setFormData] = useState<AddressData>({
-    name:'',
+    name: '',
     type: 'home',
     houseNo: '',
     landmark: '',
     area: '',
     areaPin: '',
     state: '',
-    phone: '+91'
+    phone: '+91',
   });
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -65,7 +65,7 @@ export default function AddressForm() {
     try {
       await saveAddress(formData, (user as User).token);
       toast.success('Address saved successfully');
-      navigate('/cart');
+      navigate('/cart'); 
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
@@ -78,9 +78,9 @@ export default function AddressForm() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
 
     if (!response.ok) {
@@ -92,25 +92,25 @@ export default function AddressForm() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
+    setFormData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     if (/^\d*$/.test(value) && value.length <= 10) {
-      setFormData(prevData => ({
+      setFormData((prevData) => ({
         ...prevData,
-        phone: `+91${value}`
+        phone: `+91${value}`,
       }));
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 md:p-8">
-      <div className="w-full max-w-md transform transition-all duration-300 ">
+      <div className="w-full max-w-md transform transition-all duration-300">
         <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-6 sm:p-8 space-y-8">
           <div className="text-center">
             <div className="mx-auto w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4 transform transition-transform duration-300 hover:rotate-12">
@@ -134,7 +134,7 @@ export default function AddressForm() {
                   <button
                     key={types}
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, type: types }))}
+                    onClick={() => setFormData((prev) => ({ ...prev, type: types }))}
                     className={`px-4 py-2 text-sm font-medium rounded-xl border-2 transition-all duration-200 capitalize
                       ${formData.type === types
                         ? 'border-blue-500 bg-blue-50 text-blue-700'
@@ -148,19 +148,19 @@ export default function AddressForm() {
             </div>
 
             <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-colors duration-200 focus:border-blue-500 focus:outline-none"
-                  placeholder="Enter Full Name"
-                  required
-                />
-              </div>
+              <label className="block text-sm font-medium text-gray-700">
+                Full Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-colors duration-200 focus:border-blue-500 focus:outline-none"
+                placeholder="Enter Full Name"
+                required
+              />
+            </div>
 
             <div className="space-y-2">
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
@@ -235,8 +235,6 @@ export default function AddressForm() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              
-
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
                   State

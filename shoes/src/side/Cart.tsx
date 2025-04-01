@@ -3,6 +3,7 @@ import { useAuth } from '../Context/AuthContext';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 interface Product {
   _id: string;
@@ -62,28 +63,50 @@ const CartPage = () => {
     }
   };
 
-  const checkUserDetails = async () => {
-    try {
-      const token = user.token;
-    const response = await axios.get('http://localhost:5000/api/address/check-user-details',{
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
+ 
 
+  const checkAddressExists = async (token: string) => {
+    const response = await fetch('http://localhost:5000/api/address/check-user-details', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
       if (response.status === 404) {
-        navigate('/addess');
-      } else if (!response) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to check user details. Please try again.');
+        return false; // Address details not found
+      }
+      throw new Error('Failed to fetch address details');
+    }
+  
+    const data = await response.json();
+    return !!data; // Return true if address details exist, false otherwise
+  };
+
+  
+  const handleNext = async () => {
+    if (!user?.token) {
+      toast.error('User not authenticated');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const hasAddress = await checkAddressExists(user.token);
+      if (hasAddress) {
+        navigate('/AddressDetails');
       } else {
-        const userDetails = await response.json();
-        navigate('/AddressDetails', { state: { userDetails } });
+        navigate('/address');
       }
     } catch (error) {
-      console.error('Error checking user details:', error)
-    } 
+      toast.error('Failed to check address details');
+    } finally {
+      setLoading(false);
+    }
   };
+
 
 
   const updateItemQuantity = async (id: string, quantity: number) => {
@@ -287,7 +310,7 @@ const CartPage = () => {
 
                   <button
                     className="mt-6 w-full cursor-pointer bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
-                    onClick={checkUserDetails}
+                    onClick={handleNext}
                   >
                     Proceed to Checkout
                   </button>
