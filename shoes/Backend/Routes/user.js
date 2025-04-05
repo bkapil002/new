@@ -6,6 +6,7 @@ const cookiConfig =require('../ultils/cookieConfig')
 const otpServer = require('../Server/otpServer')
 const otpServer2 = require('../Server/otpServer2');
 const { body } = require('framer-motion/client');
+const {auth} = require('../middleware/auth')
 const router = express.Router();
 
 
@@ -202,6 +203,18 @@ router.post('/resetPassword/:userId',async(req,res)=>{
     user.password = hashedPassword;
     await user.save();
     res.json({message: 'Password reset successfully'});
+  }catch(error){
+    res.status(500).json({error: error.message});
+  }
+})
+
+router.get('/me',auth,async(req,res)=>{
+  try{
+    const user = await User.findById(req.user._id);
+    if(!user){
+      return res.status(404).json({message: 'User not found'});
+    }
+    res.json(user);
   }catch(error){
     res.status(500).json({error: error.message});
   }

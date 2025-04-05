@@ -110,7 +110,7 @@ export default function UserAddressDetails() {
   };
 
   const handleNext = () => {
-    navigate('/CashOnDelivery');
+    navigate('/Checkout');
   };
 
   if (!user || !formData) {

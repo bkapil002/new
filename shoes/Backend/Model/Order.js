@@ -32,14 +32,9 @@ const orderSchema = new mongoose.Schema({
             sevenDayReturns: Boolean,
             freeDelivery: Boolean
         },
-        color: String,
         size: {
-        US7: Boolean,
-        US8:Boolean,
-        US9:Boolean,
-        US10:Boolean,
-        US11:Boolean,
-        US12:Boolean,
+          type: String,
+          required: true
         }
        ,details:String
     }],

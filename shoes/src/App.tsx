@@ -10,6 +10,9 @@ import CategoryPage from './components/CategoryPage';
 import { AuthProvider } from './Context/AuthContext';
 import AddressForm from './Page/AddressForm';
 import UserAddressDetails from './Page/UserAddressDetails';
+import Checkout from './Page/Checkout';
+import Profile from './side/Profile';
+import Orders from './side/Order';
 
 function App() {
   return (
@@ -24,6 +27,9 @@ function App() {
         <Route path='/category/:category' element={<CategoryPage/>}/>
         <Route path='/address'  element={<AddressForm/>} />
         <Route path='/AddressDetails' element={<UserAddressDetails/>} />
+        <Route path='/Checkout' element={<Checkout/>}/>
+        <Route path='/profile' element={<Profile/>}/>
+        <Route path='/orders' element={<Orders/>}/>
       </Routes>
       <Footer />
       <Toaster position="top-right" />
